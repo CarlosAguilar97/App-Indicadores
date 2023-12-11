@@ -1,0 +1,264 @@
+{% extends 'layout.html' %}
+{% block body %}
+<style>
+
+        #fileDropArea {
+          border: 2px dashed #cccccc;
+          padding: 20px;
+          text-align: center;
+          cursor: pointer;
+          border-radius: 5px;
+          bordee: 1px solid #cccccc;
+        }
+    
+        #fileInfo i {
+          cursor: pointer;
+        }
+  
+</style>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Editar Alimentacion</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form class="mb-3" action="/actualizar_alimentacion" method="POST">
+                <input type="hidden" id="id" name="id"/>
+                <div class="row mb-3">
+                    <label class="col-form-label" for="basic-default-email">Contenido</label>
+                    <input type="text" class="form-control" id="contenido" name="contenido" placeholder="Ingrese el contenido" required>
+                </div>
+                <div class="row mb-3">
+                    <div id="fileDropArea" class="mb-3">
+                        <input type="text" id="url" name="url" class="form-control" readonly> 
+                        <input type="file" id="fileInput" name="fileInput" class="form-control" style="display: none;">
+                        <label for="fileInput">
+                          <i class="bx bxs-cloud-upload bx-lg"></i>
+                          <p>Arrastra aquí el archivo</p>
+                        </label>
+                      </div>
+                      <div id="fileInfo"></div>
+                </div>    
+         </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-primary">Actualizar</button>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+   <!-- Content -->
+
+   <div class="container-fluid flex-grow-1 container">
+    <h4 class="fw-bold  mb-4"><span class="text-muted fw-light">Modulo /</span> Retro-Alimentacion</h4>
+
+    <!-- Basic Layout & Basic with Icons -->
+    <div class="row">
+      <!-- Basic Layout -->
+      <div class="col-12">
+        <div class="card mb-4">
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="mb-0">Agregar Alimentacion</h5>
+          </div>
+          <div class="card-body">
+            <form class="row g-3 needs-validation" action="/agregar_alimentacion" method="POST" enctype="multipart/form-data">
+                <div class="col-md-6">
+                    <label for="validationCustom01" class="form-label">Tarea</label>
+                    <input type="text" class="form-control" id="contenido" name="contenido" placeholder="Ingrese el contenido" required>
+                  </div>
+                <div class="col-md-12">
+                    <div id="fileDropArea" class="mb-3">
+                        <input type="file" id="fileInput" name="fileInput" class="form-control" style="display: none;">
+                        <label for="fileInput">
+                          <i class="bx bxs-cloud-upload bx-lg"></i>
+                          <p>Arrastra aquí el archivo</p>
+                        </label>
+                      </div>
+                      <div id="fileInfo"></div>
+                </div>
+                <div class="row justify-content-end">
+                        <div class="col-md-2">
+                        <button class="btn btn-primary" type="submit">Guardar</button>
+                      </div>
+                </div>
+              </form>
+          </div>
+        </div>
+      </div>
+      <!-- Basic with Icons -->
+      <div class="col-12">
+        <div class="card mb-4">
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="mb-0">Lista de Asignaciones</h5>
+          </div>
+          <div class="card-body">
+            <table id="example" class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Contenido</th>
+                    <th>Ruta</th>
+                    <th>Fecha</th>
+                    <th>Accion</th>
+                  </tr>
+                </thead>
+                <tbody class="table-border-bottom-0">    
+                    {% for alimentacion in retroalimentaciones %}
+                  <tr>
+                    <td><i class="fab fa-angular fa-lg text-danger me-3"></i><strong>{{alimentacion[0]}}</strong></td>
+                    <td>{{alimentacion[2]}}</td>
+                    <td  style="width:300px;">{{alimentacion[3]}}</td>
+                    <td  style="width:300px;">{{alimentacion[4]}}</td>
+                    <td>
+                      <div class="dropdown">
+                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                          <i class="bx bx-dots-vertical-rounded"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                          <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="MostrarEditar('{{alimentacion[0]}}|{{alimentacion[2]}}|{{alimentacion[3]}}')">
+                            <i class="bx bx-edit-alt me-1"></i> Editar
+                          </a>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function MostrarEditar(edit) {
+      var divisiones = edit.split("|");
+      console.log(divisiones);
+      document.getElementById("id").value = divisiones[0];
+      document.getElementById("contenido").value = divisiones[1];
+      document.getElementById("url").value = divisiones[2];
+    }
+  </script>
+  <script>
+    const fileDropArea = document.getElementById('fileDropArea');
+    const fileInput = document.getElementById('fileInput');
+    const fileInfo = document.getElementById('fileInfo');
+  
+    fileDropArea.addEventListener('dragover', handleDragOver);
+    fileDropArea.addEventListener('dragleave', handleDragLeave);
+    fileDropArea.addEventListener('drop', handleFileDrop);
+    fileInput.addEventListener('change', handleFileSelect);
+
+
+  
+    function handleDragOver(event) {
+        event.preventDefault();
+        const typesAllowed = ['text/csv', 'application/vnd.ms-excel', 'text/plain'];
+      
+        if (event.dataTransfer.items) {
+          for (let i = 0; i < event.dataTransfer.items.length; i++) {
+            if (typesAllowed.includes(event.dataTransfer.items[i].type)) {
+              fileDropArea.classList.add('border-primary');
+            } else {
+              fileDropArea.classList.add('border-danger');
+              alert('Solo se permiten archivos CSV, Excel y Text.');
+              return;
+            }
+          }
+        }
+      }
+  
+    function handleDragLeave(event) {
+      event.preventDefault();
+      fileDropArea.classList.remove('border-primary', 'border-danger');
+    }
+  
+    function handleFileDrop(event) {
+      event.preventDefault();
+      fileDropArea.classList.remove('border-primary', 'border-danger');
+      
+      const typesAllowed = ['text/csv', 'application/vnd.ms-excel', 'text/plain'];
+      
+      if (event.dataTransfer.types.some(type => typesAllowed.includes(type))) {
+        const files = event.dataTransfer.files;
+        handleFiles(files);
+      } else {
+        alert('Solo se permiten archivos CSV, Excel y Text.');
+      }
+    }
+  
+  function handleFileSelect(event) {
+  const files = event.target.files;
+
+  // Realizar la validación de tipos de archivo
+  const typesAllowed = ['text/csv', 'application/vnd.ms-excel', 'text/plain'];
+  if (!validateFileTypes(files, typesAllowed)) {
+    alert('Solo se permiten archivos CSV, Excel y Text.');
+    return;
+  }
+
+  handleFiles(files);
+}
+
+function validateFileTypes(files, allowedTypes) {
+  for (let i = 0; i < files.length; i++) {
+    if (!allowedTypes.includes(files[i].type)) {
+      return false;
+    }
+  }
+  return true;
+}
+  
+    function handleFiles(files) {
+      if (files.length > 0) {
+        const file = files[0];
+        const fileTypeIcon = getFileTypeIcon(file.type);
+  
+        fileInfo.innerHTML = `
+          <div class="mb-2">
+            <span><strong>Nombre:</strong> ${file.name}</span>
+            <i class="bx bx-x text-danger ms-2" onclick="removeFile()"></i>
+          </div>
+          <span><strong>Tipo:</strong> ${fileTypeIcon} ${file.type}</span>
+          <span class="ms-2"><strong>Tamaño:</strong> ${formatBytes(file.size)}</span>
+        `;
+      }
+    }
+  
+    function removeFile() {
+      fileInfo.innerHTML = '';
+      fileInput.value = '';
+    }
+  
+    function getFileTypeIcon(fileType) {
+      const fileTypeToIcon = {
+        'text/csv': 'bx bxs-file-csv',
+        'application/vnd.ms-excel': 'bx bxs-file-excel',
+        'text/plain': 'bx bxs-file-alt',
+        // Agrega más tipos de archivos según sea necesario
+      };
+  
+      const defaultIcon = 'bx bxs-file';
+      return `<i class="${fileTypeToIcon[fileType] || defaultIcon}"></i>`;
+    }
+  
+    function formatBytes(bytes, decimals = 2) {
+      if (bytes === 0) return '0 Bytes';
+  
+      const k = 1024;
+      const dm = decimals < 0 ? 0 : decimals;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+  
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+  </script>
+  
+  <!-- / Content -->
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'layout.html' %}
+{% block body %}
+<!--Modal-->
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Editar Asignacion</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form class="mb-3" action="/actualizar_asignacion" method="POST">
+                <input type="text" id="id_notificacion" name="id_notificacion"/>
+                <input type="text" id="id_asignacion" name="id_asignacion"/>
+                <div class="row mb-3">
+                    <label class="col-form-label" for="basic-default-email">Estado</label>
+                    <select class="form-select" aria-label="Default select example" id="estado" name="estado">
+                        <option selected>Seleccione</option>
+                        <option value="1">Pendiente</option>
+                        <option value="0">Completado</option>
+                    </select>
+                </div>    
+         </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-primary">Actualizar</button>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+   <!-- Content -->
+
+   <div class="container-fluid flex-grow-1 container">
+    <h4 class="fw-bold  mb-4"><span class="text-muted fw-light">Modulo /</span> Notificaciones</h4>
+
+    <!-- Basic Layout & Basic with Icons -->
+    <div class="row">
+      <!-- Basic Layout -->
+      <!-- Basic with Icons -->
+      <div class="col-12">
+        <div class="card mb-4">
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="mb-0">Lista de Notificaciones</h5>
+          </div>
+          <div class="card-body">
+            <table id="example" class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Usuario</th>
+                    <th>Tarea</th>
+                    <th>Descripcion</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Accion</th>
+                  </tr>
+                </thead>
+                <tbody class="table-border-bottom-0">    
+                    {% for notificacion in notificaciones %}
+                  <tr>
+                    <td><i class="fab fa-angular fa-lg text-danger me-3"></i><strong>{{notificacion[2]}}</strong></td>
+                    <td>{{notificacion[4]}}</td>
+                    <td style="width:300px;">{{notificacion[5]}}</td>
+                    <td>{{notificacion[7]}}</td>
+                    <td>
+                        {% if notificacion[6] == 'Pendiente' %}
+                        <span class="badge rounded-pill bg-label-warning">Pendiente</span>
+                        {% elif notificacion[6] == 'Completado' %}
+                        <span class="badge rounded-pill bg-label-success">Completado</span>
+                        {% elif notificacion[6] == 'Observado' %}
+                        <span class="badge rounded-pill bg-label-info">Observado</span>
+                        {% elif notificacion[6] == 'Cancelado' %}
+                        <span class="badge rounded-pill bg-label-danger">Cancelado</span>
+                        {% else %}
+                        <span class="badge rounded-pill bg-label-secondary">Desconocido</span>
+                        {% endif %}
+                      </td>
+                    <td>
+                      <div class="dropdown">
+                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                          <i class="bx bx-dots-vertical-rounded"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                          <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="MostrarEditar('{{notificacion[0]}}|{{notificacion[1]}}|{{notificacion[3]}}|{{notificacion[4]}}|{{notificacion[6]}}')">
+                            <i class="bx bx-edit-alt me-1"></i> Editar
+                          </a>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function MostrarEditar(edit) {
+      var divisiones = edit.split("|");
+        document.getElementById("id").value = divisiones[0];
+        document.getElementById("usuario").value = divisiones[1];
+        document.getElementById("tarea").value = divisiones[2];
+        document.getElementById("descripcion").value = divisiones[3];
+        if(divisiones[4] == "Activo"){
+            divisiones[4] = 1;
+
+        }else{
+            divisiones[4] = 0;
+        }
+       
+        document.getElementById("estado").value = divisiones[4];
+    }
+  </script>
+  <!-- / Content -->
+{% endblock %}

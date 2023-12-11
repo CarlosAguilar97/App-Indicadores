@@ -1,0 +1,172 @@
+{% extends 'layout.html' %}
+{% block body %}
+<!--Modal-->
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Editar Asignacion</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form class="mb-3" action="/actualizar_asignacion" method="POST">
+                <input type="hidden" id="id" name="id"/>
+                <div class="row mb-3">
+                    <label class="col-form-label" for="basic-default-name">Usuario</label>
+                    <select class="form-select" id="usuario" name="usuario" required>
+                        <option selected disabled value="">-Seleccione Usuario-</option>
+                        {% for usuario in usuarios_obtenidos %}
+                          <option value="{{usuario[0]}}">{{usuario[1]}}</option>
+                        {% endfor %}
+                      </select>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-form-label" for="basic-default-email">Tarea</label>
+                    <input type="text" class="form-control" id="tarea" name="tarea" placeholder="Ingrese la tarea" required>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-form-label" for="basic-default-email">Descripcion</label>
+                    <textarea type="text" class="form-control" id="descripcion" name="descripcion" placeholder="Ingrese la descripcion" required></textarea>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-form-label" for="basic-default-email">Estado</label>
+                    <select class="form-select" aria-label="Default select example" id="estado" name="estado">
+                        <option selected>Seleccione</option>
+                        <option value="1">Pendiente</option>
+                        <option value="0">Completado</option>
+                        <option value="2">Observado</option>
+                        <option value="3">Cancelado</option>
+                    </select>
+                </div>    
+         </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-primary">Actualizar</button>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+   <!-- Content -->
+
+   <div class="container-fluid flex-grow-1 container">
+    <h4 class="fw-bold  mb-4"><span class="text-muted fw-light">Modulo /</span> Asignaciones</h4>
+
+    <!-- Basic Layout & Basic with Icons -->
+    <div class="row">
+      <!-- Basic Layout -->
+      <div class="col-12">
+        <div class="card mb-4">
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="mb-0">Agregar Asignacion</h5>
+          </div>
+          <div class="card-body">
+            <form class="row g-3 needs-validation" action="/agregar_asignacion" method="POST">
+                <div class="col-md-6">
+                    <label for="validationCustom04" class="form-label">Usuarios</label>
+                    <select class="form-select" id="usuario" name="usuario" required>
+                      <option selected disabled value="">-Seleccione Usuario-</option>
+                      {% for usuario in usuarios_obtenidos %}
+                        <option value="{{usuario[0]}}">{{usuario[1]}}</option>
+                      {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="validationCustom01" class="form-label">Tarea</label>
+                  <input type="text" class="form-control" id="tarea" name="tarea" placeholder="Ingrese la tarea" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="validationCustom02" class="form-label">Descripcion</label>
+                  <textarea type="text" class="form-control" id="descripcion" name="descripcion" placeholder="Ingrese la descripcion" required></textarea>
+                </div>
+                <div class="row justify-content-end">
+                        <div class="col-md-2">
+                        <button class="btn btn-primary" type="submit">Guardar</button>
+                      </div>
+                </div>
+              </form>
+          </div>
+        </div>
+      </div>
+      <!-- Basic with Icons -->
+      <div class="col-12">
+        <div class="card mb-4">
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="mb-0">Lista de Asignaciones</h5>
+          </div>
+          <div class="card-body">
+            <table id="example" class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Usuario</th>
+                    <th>Tarea</th>
+                    <th>Descripcion</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Accion</th>
+                  </tr>
+                </thead>
+                <tbody class="table-border-bottom-0">    
+                    {% for asignaciones in asignaciones_obtenidas %}
+                  <tr>
+                    <td><i class="fab fa-angular fa-lg text-danger me-3"></i><strong>{{asignaciones[2]}}</strong></td>
+                    <td>{{asignaciones[3]}}</td>
+                    <td style="width:300px;">{{asignaciones[4]}}</td>
+                    <td>{{asignaciones[5]}}</td>
+                    <td>
+                        {% if asignaciones[6] == 'Pendiente' %}
+                        <span class="badge rounded-pill bg-label-warning">Pendiente</span>
+                        {% elif asignaciones[6] == 'Completado' %}
+                        <span class="badge rounded-pill bg-label-success">Completado</span>
+                        {% elif asignaciones[6] == 'Observado' %}
+                        <span class="badge rounded-pill bg-label-info">Observado</span>
+                        {% elif asignaciones[6] == 'Cancelado' %}
+                        <span class="badge rounded-pill bg-label-danger">Cancelado</span>
+                        {% else %}
+                        <span class="badge rounded-pill bg-label-secondary">Desconocido</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                      <div class="dropdown">
+                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                          <i class="bx bx-dots-vertical-rounded"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                          <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="MostrarEditar('{{asignaciones[0]}}|{{asignaciones[1]}}|{{asignaciones[3]}}|{{asignaciones[4]}}|{{asignaciones[6]}}')">
+                            <i class="bx bx-edit-alt me-1"></i> Editar
+                          </a>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function MostrarEditar(edit) {
+      var divisiones = edit.split("|");
+        document.getElementById("id").value = divisiones[0];
+        document.getElementById("usuario").value = divisiones[1];
+        document.getElementById("tarea").value = divisiones[2];
+        document.getElementById("descripcion").value = divisiones[3];
+        //hay nuevos estado  Pendiente, Completado, Observado, Cancelado deben validar en el if
+        if(divisiones[4] == 'Pendiente'){
+          document.getElementById("estado").value = 1;
+        }else if(divisiones[4] == 'Completado'){
+            document.getElementById("estado").value = 0;
+        }else if(divisiones[4] == 'Observado'){
+            document.getElementById("estado").value = 2;
+        }else if(divisiones[4] == 'Cancelado'){
+            document.getElementById("estado").value = 3;
+        }
+    }
+  </script>
+  <!-- / Content -->
+{% endblock %}
